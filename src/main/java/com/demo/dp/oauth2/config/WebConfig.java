@@ -1,54 +1,51 @@
 package com.demo.dp.oauth2.config;
 
+import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author qupengcheng
- * @description
+ * @description 配置基础拦截
  * @date 14:35 2019/11/16
  */
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 public class WebConfig extends WebSecurityConfigurerAdapter {
+
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @SneakyThrows
+    protected void configure(HttpSecurity http) {
         http
                 .authorizeRequests()
-                .anyRequest().authenticated().and()
-                // custom token authorize exception handler
-                .exceptionHandling()
-
-//                .authenticationEntryPoint(unauthorizedHandler)
-                .and()
-                // since we use jwt, session is not necessary
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                // since we use jwt, csrf is not necessary
-                .csrf().disable();
-        // 可以自定义过滤
-        // http.addFilterBefore(new JwtAuthenticationTokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
-
-        // disable cache
-        http.headers().cacheControl();
+                .antMatchers("/v1/**").permitAll()
+                .anyRequest().authenticated()
+                .and().csrf().disable();
     }
 
-
-    /**
-     * 需要配置这个支持password模式 support password grant type
-     * @return
-     * @throws Exception
-     */
     @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/css/**");
+    }
+
     @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
+    @Override
+    @SneakyThrows
+    public AuthenticationManager authenticationManagerBean() {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }
 

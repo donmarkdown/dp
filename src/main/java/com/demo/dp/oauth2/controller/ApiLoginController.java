@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 public class ApiLoginController {
 
-    @GetMapping("hello")
+    @GetMapping("/v1/hello")
     public String hello() {
-        return "Hello World";
+        return "login api";
     }
 
-    @GetMapping("api/hello")
+    @GetMapping("/echo")
     public String apiHello() {
-        return "Hello World";
+        return "echo api";
     }
 }

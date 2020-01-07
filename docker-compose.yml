@@ -1,0 +1,8 @@
+version: '2'
+services:
+  dp-admin:
+    image: dp/dp
+    ports:
+    - "8788:8788"
+    environment:
+    - spring.profiles.active=dev

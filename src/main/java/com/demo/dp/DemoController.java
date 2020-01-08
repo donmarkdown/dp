@@ -16,6 +16,6 @@ public class DemoController {
 
     @GetMapping("echo")
     public String echo() {
-        return "today is nice day";
+        return "today is nice day~~~";
     }
 }
